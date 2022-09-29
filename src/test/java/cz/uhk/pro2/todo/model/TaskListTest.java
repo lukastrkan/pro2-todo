@@ -1,6 +1,5 @@
 package cz.uhk.pro2.todo.model;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.time.LocalDate;
@@ -18,6 +17,6 @@ public class TaskListTest {
         taskList.addTask(new Task(LocalDate.of(2020, 1, 1), "Task 4").setFinished(false));
         taskList.addTask(new Task(LocalDate.of(2020, 1, 1), "Task 5").setFinished(true));
 
-        assertEquals(taskList.countUnfinished(), 2);
+        assertEquals(taskList.countUnfinished(), 3);
     }
 }
