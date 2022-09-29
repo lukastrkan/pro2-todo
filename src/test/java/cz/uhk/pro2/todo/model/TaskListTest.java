@@ -19,4 +19,10 @@ public class TaskListTest {
 
         assertEquals(taskList.countUnfinished(), 3);
     }
+
+    @Test
+    public void countUnfinished0(){
+        var taskList = new TaskList();
+        assertEquals(taskList.countUnfinished(), 0);
+    }
 }
