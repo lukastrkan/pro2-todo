@@ -18,6 +18,6 @@ public class TaskListTest {
         taskList.addTask(new Task(LocalDate.of(2020, 1, 1), "Task 4").setFinished(false));
         taskList.addTask(new Task(LocalDate.of(2020, 1, 1), "Task 5").setFinished(true));
 
-        assertEquals(taskList.countUnfinished(), 3);
+        assertEquals(taskList.countUnfinished(), 2);
     }
 }
