@@ -7,10 +7,9 @@ import javax.swing.*;
 import java.time.LocalDate;
 
 public class TodoMain {
-
-    private static TaskList taskList = new TaskList();
-
     public static void main(String[] args) {
+        var taskList = new TaskList();
+
         // create tasks until user enters empty name
         while (true) {
             String description = JOptionPane.showInputDialog("Enter task name");
