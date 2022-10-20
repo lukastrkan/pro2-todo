@@ -1,5 +1,6 @@
 package cz.uhk.pro2.todo;
 
+import cz.uhk.pro2.todo.gui.TaskListTableModel;
 import cz.uhk.pro2.todo.model.Task;
 import cz.uhk.pro2.todo.model.TaskList;
 
@@ -13,8 +14,12 @@ public class TodoMain extends JFrame {
 
     private TaskList taskList = new TaskList();
 
-    private JTextArea txtOutput = new JTextArea(20,40);
+    //private JTextArea txtOutput = new JTextArea(20,40);
 
+
+    private TaskListTableModel taskListTableModel = new TaskListTableModel(taskList);
+
+    private JTable tblTasks = new JTable(taskListTableModel);
 
     public TodoMain() {
         setTitle("ToDo list");
@@ -25,12 +30,12 @@ public class TodoMain extends JFrame {
         JPanel panel = new JPanel();
         panel.setBackground(Color.CYAN);
         this.add(panel, BorderLayout.NORTH);
-        this.add(new JScrollPane(txtOutput), BorderLayout.SOUTH);
+        this.add(new JScrollPane(tblTasks), BorderLayout.CENTER);
         JButton btnAdd = new JButton("Přidat úkol");
         panel.add(btnAdd);
         btnAdd.addActionListener(e -> addTask(taskList));
 
-        txtOutput.setText(taskList.getTasks().toString());
+        //txtOutput.setText(taskList.getTasks().toString());
 
         pack();
     }
@@ -46,12 +51,13 @@ public class TodoMain extends JFrame {
 
             // Vytvoření úkolu a přidání úkolu do tasklistu
             taskList.addTask(new Task(date, description));
-            txtOutput.setText(taskList.getTasks().toString());
+            //txtOutput.setText(taskList.getTasks().toString());
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(null, "Nesprávně zadané datum.", "Upozornění", JOptionPane.ERROR_MESSAGE);
         } catch (NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "Nezadali jste žádnou hodnotu! \n\n" + ex.getMessage(), "Upozornění", JOptionPane.ERROR_MESSAGE);
         }
+        tblTasks.updateUI();
     }
 
     public static void main(String[] args) {
