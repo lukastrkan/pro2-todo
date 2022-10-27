@@ -16,10 +16,10 @@ import java.time.format.DateTimeParseException;
 public class TodoMain extends JFrame {
 
 
-    private TaskList taskList = new TaskList();
+    private final TaskList taskList = new TaskList();
     private final DateTimeFormatter dateFormater = DateTimeFormatter.ofPattern("d.M.yyyy");
-    private TaskListTableModel taskListTableModel = new TaskListTableModel(taskList, dateFormater);
-    private JTable tblTasks = new JTable(taskListTableModel);
+    private final TaskListTableModel taskListTableModel = new TaskListTableModel(taskList, dateFormater);
+    private final JTable tblTasks = new JTable(taskListTableModel);
 
 
     public TodoMain() {
@@ -84,9 +84,5 @@ public class TodoMain extends JFrame {
             TodoMain tm = new TodoMain();
         });
 
-    }
-
-    public static DateTimeFormatter getDateTimeFormater() {
-        return DateTimeFormatter.ofPattern("d.M.yyyy");
     }
 }
