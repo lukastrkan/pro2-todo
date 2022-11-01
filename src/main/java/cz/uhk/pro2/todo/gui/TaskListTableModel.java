@@ -4,6 +4,7 @@ import cz.uhk.pro2.todo.TodoMain;
 import cz.uhk.pro2.todo.model.TaskList;
 
 import javax.swing.table.AbstractTableModel;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class TaskListTableModel extends AbstractTableModel {
@@ -72,11 +73,7 @@ public class TaskListTableModel extends AbstractTableModel {
 
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
-        switch (columnIndex) {
-            case 2:
-                return true;
-        }
-        return false;
+        return true;
         //TODO: edit all fields
     }
 
@@ -84,6 +81,14 @@ public class TaskListTableModel extends AbstractTableModel {
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
         if (columnIndex == 2) {
             taskList.getTasks().get(rowIndex).setFinished((boolean) aValue);
+        }
+
+        if (columnIndex == 1){
+            taskList.getTasks().get(rowIndex).setDescription((String) aValue);
+        }
+
+        if (columnIndex == 0){
+            taskList.getTasks().get(rowIndex).setDueDate(LocalDate.from(dateTimeFormatter.parse((String) aValue)));
         }
     }
 }
