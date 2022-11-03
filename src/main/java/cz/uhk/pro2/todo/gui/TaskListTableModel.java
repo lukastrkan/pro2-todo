@@ -79,16 +79,17 @@ public class TaskListTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        if (columnIndex == 2) {
-            taskList.getTasks().get(rowIndex).setFinished((boolean) aValue);
-        }
-
-        if (columnIndex == 1){
-            taskList.getTasks().get(rowIndex).setDescription((String) aValue);
-        }
-
-        if (columnIndex == 0){
-            taskList.getTasks().get(rowIndex).setDueDate(LocalDate.from(dateTimeFormatter.parse((String) aValue)));
+        var t = taskList.getTasks().get(rowIndex);
+        switch (columnIndex) {
+            case 2:
+                t.setFinished((boolean) aValue);
+                break;
+            case 1:
+                t.setDescription((String) aValue);
+                break;
+            case 0:
+                t.setDueDate(LocalDate.from(dateTimeFormatter.parse((String) aValue)));
+                break;
         }
     }
 }
