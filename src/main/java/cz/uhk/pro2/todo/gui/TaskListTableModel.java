@@ -1,7 +1,6 @@
 package cz.uhk.pro2.todo.gui;
 
-import cz.uhk.pro2.todo.TodoMain;
-import cz.uhk.pro2.todo.model.TaskList;
+import cz.uhk.pro2.todo.model.InMemoryTaskList;
 
 import javax.swing.table.AbstractTableModel;
 import java.time.LocalDate;
@@ -9,18 +8,18 @@ import java.time.format.DateTimeFormatter;
 
 public class TaskListTableModel extends AbstractTableModel {
 
-    private TaskList taskList;
+    private InMemoryTaskList inMemoryTaskList;
 
     private DateTimeFormatter dateTimeFormatter;
 
-    public TaskListTableModel(TaskList taskList, DateTimeFormatter dateFormater) {
-        this.taskList = taskList;
+    public TaskListTableModel(InMemoryTaskList inMemoryTaskList, DateTimeFormatter dateFormater) {
+        this.inMemoryTaskList = inMemoryTaskList;
         this.dateTimeFormatter = dateFormater;
     }
 
     @Override
     public int getRowCount() {
-        return taskList.getTasks().size();
+        return inMemoryTaskList.getTasks().size();
     }
 
     @Override
@@ -30,7 +29,7 @@ public class TaskListTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        var task = taskList.getTasks().get(rowIndex);
+        var task = inMemoryTaskList.getTasks().get(rowIndex);
 
         switch (columnIndex) {
             case 0:
@@ -74,12 +73,11 @@ public class TaskListTableModel extends AbstractTableModel {
     @Override
     public boolean isCellEditable(int rowIndex, int columnIndex) {
         return true;
-        //TODO: edit all fields
     }
 
     @Override
     public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-        var t = taskList.getTasks().get(rowIndex);
+        var t = inMemoryTaskList.getTasks().get(rowIndex);
         switch (columnIndex) {
             case 2:
                 t.setFinished((boolean) aValue);
@@ -91,5 +89,10 @@ public class TaskListTableModel extends AbstractTableModel {
                 t.setDueDate(LocalDate.from(dateTimeFormatter.parse((String) aValue)));
                 break;
         }
+    }
+
+    public void setTaskList(InMemoryTaskList inMemoryTaskList) {
+        this.inMemoryTaskList = inMemoryTaskList;
+        fireTableDataChanged();
     }
 }

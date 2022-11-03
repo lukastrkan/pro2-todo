@@ -1,9 +1,11 @@
 package cz.uhk.pro2.todo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import cz.uhk.pro2.todo.gui.TaskListTableModel;
 import cz.uhk.pro2.todo.model.Task;
-import cz.uhk.pro2.todo.model.TaskList;
+import cz.uhk.pro2.todo.model.InMemoryTaskList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,10 +18,13 @@ import java.time.format.DateTimeParseException;
 public class TodoMain extends JFrame {
 
 
-    private final TaskList taskList = new TaskList();
+    private InMemoryTaskList inMemoryTaskList = new InMemoryTaskList();
     private final DateTimeFormatter dateFormater = DateTimeFormatter.ofPattern("d.M.yyyy");
-    private final TaskListTableModel taskListTableModel = new TaskListTableModel(taskList, dateFormater);
+    private final TaskListTableModel taskListTableModel = new TaskListTableModel(inMemoryTaskList, dateFormater);
     private final JTable tblTasks = new JTable(taskListTableModel);
+
+    private final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
+    private String jsonFilename = "data.json";
 
 
     public TodoMain() {
@@ -32,29 +37,38 @@ public class TodoMain extends JFrame {
         panel.setBackground(Color.CYAN);
         this.add(panel, BorderLayout.NORTH);
         this.add(new JScrollPane(tblTasks), BorderLayout.CENTER);
-        var btnSave = new JButton("Uložit do jsonu");
 
+        var btnSave = new JButton("Uložit do jsonu");
+        var btnLoad = new JButton("Načíst z JSON");
         JButton btnAdd = new JButton("Přidat úkol");
+
         panel.add(btnAdd);
         panel.add(btnSave);
-        btnAdd.addActionListener(e -> addTask(taskList));
+        panel.add(btnLoad);
+        btnAdd.addActionListener(e -> addTask(inMemoryTaskList));
         btnSave.addActionListener(e -> saveTasks());
-
-        //txtOutput.setText(taskList.getTasks().toString());
-
+        btnLoad.addActionListener(e -> loadTasks());
         pack();
     }
 
-    private void saveTasks() {
-        ObjectMapper mapper = new ObjectMapper();
+    private void loadTasks() {
         try {
-            mapper.writeValue(new File("data.json"), taskList);
+            inMemoryTaskList = mapper.readValue(new File(jsonFilename), InMemoryTaskList.class);
+            taskListTableModel.setTaskList(inMemoryTaskList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void addTask(TaskList taskList) {
+    private void saveTasks() {
+        try {
+            mapper.writeValue(new File(jsonFilename), inMemoryTaskList);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void addTask(InMemoryTaskList inMemoryTaskList) {
         // Kontrola správnosti dat
         try {
             // Zadání od uživatele
@@ -69,14 +83,14 @@ public class TodoMain extends JFrame {
             }
 
             // Vytvoření úkolu a přidání úkolu do tasklistu
-            taskList.addTask(new Task(date, description));
+            inMemoryTaskList.addTask(new Task(date, description));
             //txtOutput.setText(taskList.getTasks().toString());
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(null, "Nesprávně zadané datum.", "Upozornění", JOptionPane.ERROR_MESSAGE);
         } catch (NullPointerException ex) {
             JOptionPane.showMessageDialog(null, "Nezadali jste žádnou hodnotu! \n\n" + ex.getMessage(), "Upozornění", JOptionPane.ERROR_MESSAGE);
         }
-        tblTasks.updateUI();
+        taskListTableModel.fireTableDataChanged();
     }
 
     public static void main(String[] args) {

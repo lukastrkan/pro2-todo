@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class TaskList {
+public class InMemoryTaskList {
     private List<Task> tasks = new ArrayList<>();
 
     public void addTask(@NotNull Task task) {

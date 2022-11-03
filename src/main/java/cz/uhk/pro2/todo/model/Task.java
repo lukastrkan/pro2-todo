@@ -8,6 +8,8 @@ public class Task {
     private LocalDate dueDate;
     private String description;
     private boolean finished;
+    public Task() {
+    }
 
     public Task(LocalDate dueDate, String description) {
         this.dueDate = dueDate;
