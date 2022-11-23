@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import cz.uhk.pro2.todo.gui.TaskListTableModel;
+import cz.uhk.pro2.todo.model.DbTaskList;
 import cz.uhk.pro2.todo.model.Task;
 import cz.uhk.pro2.todo.model.InMemoryTaskList;
+import cz.uhk.pro2.todo.model.TaskList;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,9 +20,9 @@ import java.time.format.DateTimeParseException;
 public class TodoMain extends JFrame {
 
 
-    private InMemoryTaskList inMemoryTaskList = new InMemoryTaskList();
+    private TaskList taskList = new DbTaskList();
     private final DateTimeFormatter dateFormater = DateTimeFormatter.ofPattern("d.M.yyyy");
-    private final TaskListTableModel taskListTableModel = new TaskListTableModel(inMemoryTaskList, dateFormater);
+    private final TaskListTableModel taskListTableModel = new TaskListTableModel(taskList, dateFormater);
     private final JTable tblTasks = new JTable(taskListTableModel);
 
     private final ObjectMapper mapper = JsonMapper.builder().addModule(new JavaTimeModule()).build();
@@ -45,7 +47,7 @@ public class TodoMain extends JFrame {
         panel.add(btnAdd);
         panel.add(btnSave);
         panel.add(btnLoad);
-        btnAdd.addActionListener(e -> addTask(inMemoryTaskList));
+        btnAdd.addActionListener(e -> addTask(taskList));
         btnSave.addActionListener(e -> saveTasks());
         btnLoad.addActionListener(e -> loadTasks());
         pack();
@@ -53,8 +55,8 @@ public class TodoMain extends JFrame {
 
     private void loadTasks() {
         try {
-            inMemoryTaskList = mapper.readValue(new File(jsonFilename), InMemoryTaskList.class);
-            taskListTableModel.setTaskList(inMemoryTaskList);
+            taskList = mapper.readValue(new File(jsonFilename), InMemoryTaskList.class);
+            taskListTableModel.setTaskList(taskList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,13 +64,13 @@ public class TodoMain extends JFrame {
 
     private void saveTasks() {
         try {
-            mapper.writeValue(new File(jsonFilename), inMemoryTaskList);
+            mapper.writeValue(new File(jsonFilename), taskList);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void addTask(InMemoryTaskList inMemoryTaskList) {
+    private void addTask(TaskList taskList) {
         // Kontrola správnosti dat
         try {
             // Zadání od uživatele
@@ -83,7 +85,7 @@ public class TodoMain extends JFrame {
             }
 
             // Vytvoření úkolu a přidání úkolu do tasklistu
-            inMemoryTaskList.addTask(new Task(date, description));
+            taskList.addTask(new Task(date, description));
             //txtOutput.setText(taskList.getTasks().toString());
         } catch (DateTimeParseException ex) {
             JOptionPane.showMessageDialog(null, "Nesprávně zadané datum.", "Upozornění", JOptionPane.ERROR_MESSAGE);

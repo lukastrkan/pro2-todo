@@ -5,15 +5,24 @@ import org.jetbrains.annotations.NotNull;
 import java.time.LocalDate;
 
 public class Task {
+
+    private long id;
     private LocalDate dueDate;
     private String description;
     private boolean finished;
+
     public Task() {
     }
 
     public Task(LocalDate dueDate, String description) {
+        this(0, dueDate, description, false);
+    }
+
+    public Task(long id, LocalDate dueDate, String description, boolean finished) {
+        this.id = id;
         this.dueDate = dueDate;
         this.description = description;
+        this.finished = finished;
     }
 
     public LocalDate getDueDate() {
